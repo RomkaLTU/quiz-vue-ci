@@ -32,18 +32,19 @@ class Proccess extends CI_Controller {
         $questions_count = count($questions);
         $correct_answers = 0;
 
-        $data .= "Hei, \n";
-        $data .= "kiitos, kun osallistuit IDO- ja Geberit-tuotteidemme online-koulutukseen. Toivottavasti sait koulutuksesta hyöydyllistä tietoa. \n";
-        $data .= "Jos koulutuksen aikana heräsi kysymyksiä, niin otathan yhteyttä alueesi myyntiedustajaamme. Yhteystiedot löydät myös kotisivuiltamme www.geberit.fi. \n";
+        $data .= '<div style="font-family: Arial, Helvetica, sans-serif;">';
+        $data .= "Hei, \n\n";
+        $data .= "kiitos, kun osallistuit IDO- ja Geberit-tuotteidemme online-koulutukseen.\nToivottavasti sait koulutuksesta hyöydyllistä tietoa. \n";
+        $data .= "Jos koulutuksen aikana heräsi kysymyksiä, niin otathan yhteyttä alueesi\nmyyntiedustajaamme. Yhteystiedot löydät myös kotisivuiltamme\nwww.geberit.fi. \n";
 
         $data .= "\n";
 
-        $data .= "Alla näet tuloksesi. \n";
+        $data .= "Alla näet tuloksesi. \n\n";
 
-        $data .= "User: $user->name \n";
-        $data .= "Company: $user->company_name \n";
-        $data .= "City: $user->city \n";
-        $data .= "Email: $user->email \n\n";
+        $data .= "User: <strong>$user->name</strong> \n";
+        $data .= "Company: <strong>$user->company_name</strong> \n";
+        $data .= "City: <strong>$user->city</strong> \n";
+        $data .= "Email: <strong>$user->email</strong> \n\n";
 
         foreach ($questions as $q) {
             if ( $q->selected_answer == $q->correct_answer ) {
@@ -54,21 +55,20 @@ class Proccess extends CI_Controller {
         $correct_answers_percentage = $correct_answers * 100 / $questions_count;
 
         $data .= "You’ve answered {$correct_answers_percentage}% ($correct_answers questions out of $questions_count) correctly \n";
-        $data .= "You can review all the test results below.";
-
-        $data .= "Questions and answers \n\n";
+        $data .= "You can review all the test results below. Questions and answers \n\n";
 
         foreach($questions as $q) {
-            $data .= "$question_number) $q->question \n";
+            $data .= "<strong>$question_number) $q->question</strong> \n";
             foreach ($q->possible_answers as $pa) {
                 $data .= "$pa \n";
             }
-            $data .= "\nAnswered: {$q->possible_answers[$q->selected_answer]}\n";
-            $data .= "Correct answer: {$q->possible_answers[$q->correct_answer]}\n\n";
+            $data .= "\nVastauksesi: {$q->possible_answers[$q->selected_answer]}\n";
+            $data .= "Oikea vastaus: {$q->possible_answers[$q->correct_answer]}\n\n";
             $question_number++;
         }
 
-        $data .= "Terveisin Geberit Oy \n\n";
+        $data .= "Terveisin \nGeberit Oy \n\n";
+        $data .= "</div>";
 
         $stats = [
             'final_result' => $correct_answers_percentage,
