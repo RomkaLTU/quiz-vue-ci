@@ -32,18 +32,22 @@ class Proccess extends CI_Controller {
         $questions_count = count($questions);
         $correct_answers = 0;
 
-        $data .= "Hei, \n";
-        $data .= "kiitos, kun osallistuit IDO- ja Geberit-tuotteidemme online-koulutukseen. Toivottavasti sait koulutuksesta hyöydyllistä tietoa. \n";
-        $data .= "Jos koulutuksen aikana heräsi kysymyksiä, niin otathan yhteyttä alueesi myyntiedustajaamme. Yhteystiedot löydät myös kotisivuiltamme www.geberit.fi. \n";
+        $data.= '<!DOCTYPE html><html lang="fn">';
+        $data.= '<head><meta charset="UTF-8"><body>';
+
+        $data .= '<p style="font-family: Arial, Helvetica, sans-serif;">';
+        $data .= "Hei,<br><br> \n\n";
+        $data .= "kiitos, kun osallistuit IDO- ja Geberit-tuotteidemme online-koulutukseen. Toivottavasti sait koulutuksesta hyöydyllistä tietoa.<br><br> \n\n";
+        $data .= "Jos koulutuksen aikana heräsi kysymyksiä, niin otathan yhteyttä alueesi myyntiedustajaamme. Yhteystiedot löydät myös kotisivuiltamme www.geberit.fi.<br><br> \n";
 
         $data .= "\n";
 
-        $data .= "Alla näet tuloksesi. \n";
+        $data .= "Alla näet tuloksesi.<br><br> \n\n";
 
-        $data .= "User: $user->name \n";
-        $data .= "Company: $user->company_name \n";
-        $data .= "City: $user->city \n";
-        $data .= "Email: $user->email \n\n";
+        $data .= "Nimesi: <strong>$user->name</strong><br> \n";
+        $data .= "Yritys: <strong>$user->company_name</strong><br> \n";
+        $data .= "Kaupunki: <strong>$user->city</strong><br> \n";
+        $data .= "Sähköposti: <strong>$user->email</strong><br><br> \n\n";
 
         foreach ($questions as $q) {
             if ( $q->selected_answer == $q->correct_answer ) {
@@ -53,22 +57,25 @@ class Proccess extends CI_Controller {
 
         $correct_answers_percentage = $correct_answers * 100 / $questions_count;
 
-        $data .= "You’ve answered {$correct_answers_percentage}% ($correct_answers questions out of $questions_count) correctly \n";
-        $data .= "You can review all the test results below.";
+        $data .= "Olet vastannut oikein {$correct_answers_percentage}%:iin kysymyksistä ($correct_answers kysymystä oikein {$questions_count}:sta)<br> \n";
+        $data .= "Voit tarkistaa oikeat vastaukset alta.<br><br>\n\n";
 
-        $data .= "Questions and answers \n\n";
+        $data .= "Tulos<br><br> \n\n";
 
         foreach($questions as $q) {
-            $data .= "$question_number) $q->question \n";
+            $data .= "<strong>$question_number) $q->question</strong><br> \n";
             foreach ($q->possible_answers as $pa) {
-                $data .= "$pa \n";
+                $data .= "$pa <br>\n";
             }
-            $data .= "\nAnswered: {$q->possible_answers[$q->selected_answer]}\n";
-            $data .= "Correct answer: {$q->possible_answers[$q->correct_answer]}\n\n";
+            $data .= "\nVastauksesi: {$q->possible_answers[$q->selected_answer]}<br>\n";
+            $data .= "Oikea vastaus: {$q->possible_answers[$q->correct_answer]}<br><br>\n\n";
             $question_number++;
         }
 
-        $data .= "Terveisin Geberit Oy \n\n";
+        $data .= "Terveisin<br> \nGeberit Oy<br><br> \n\n";
+        $data .= '</p>';
+
+        $data .= '</body></html>';
 
         $stats = [
             'final_result' => $correct_answers_percentage,
@@ -85,11 +92,13 @@ class Proccess extends CI_Controller {
             'smtp_pass' => 'W24geCW6G9YQztj!',
             'smtp_port' => '587',
             'smtp_crypto' => 'tls',
+            'mailtype' => 'html',
         ));
 
-        $this->email->from('your@example.com', 'Geberit Oy');
+        $this->email->from('koulutukset.fi@geberit.com', 'Geberit Oy');
         $this->email->to($user->email);
-        $this->email->bcc('andrius@adguns.lt');
+        $this->email->bcc('andrius@adguns.lt,koulutukset.fi@geberit.com');
+        // $this->email->bcc('koulutukset.fi@geberit.com');
         $this->email->subject('Testituloksesi');
         $this->email->message($data);
 
