@@ -100,6 +100,7 @@ class Proccess extends CI_Controller {
         $this->email->bcc('andrius@adguns.lt,koulutukset.fi@geberit.com');
         // $this->email->bcc('koulutukset.fi@geberit.com');
         $this->email->subject('Testituloksesi');
+        $this->email->set_alt_message(strip_tags($data));
         $this->email->message($data);
 
         $this->email->send();
